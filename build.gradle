@@ -22,7 +22,11 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
-    compile 'org.springframework.boot:spring-boot-starter-jersey:1.5.10.RELEASE'
+    compile ('org.springframework.boot:spring-boot-starter-jersey:1.5.10.RELEASE') {
+        exclude(module: 'spring-boot-starter-tomcat')
+        exclude(module: 'spring-boot-starter-validation')
+    }
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
     compile group: 'com.google.guava', name: 'guava', version: '23.0'
     compile(group: 'org.apache.zookeeper', name: 'zookeeper', version: '3.4.10') {
         exclude(module: 'slf4j-log4j12')
