@@ -39,7 +39,7 @@
                 <td>${service.serviceAddr!''}</td>
                 <td>
                     <div>
-                        <button type="button" class="btn btn-primary" onclick="load(${service.childNode!''}, ${service.subChildNode!''})">编辑</button>
+                        <button type="button" class="btn btn-primary" onclick="load('${service.childNode!''}', '${service.subChildNode!''}')">编辑</button>
                         <button type="button" class="btn btn-primary" onclick="">删除</button>
                     </div>
                 </td>
@@ -215,7 +215,6 @@
                 alert("网络异常！");
             }
         });
-
     }
 
     /*获取json*/
