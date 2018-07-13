@@ -76,6 +76,34 @@
     </div>
 </div>
 
+<!-- 编辑service div-->
+<div class="modal fade" id="editServiceModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">编辑</h4>
+            </div>
+            <form role="form">
+                <div class="modal-body">
+                    <label>根节点</label>
+                    <input id="rootNode" type="text" class="form-control" disabled>
+                    <label>服务名称(示例：com.msa.sample.api.HelloRpc4jService):</label>
+                    <input id="name" type="text" class="form-control" placeholder="输入服务名称" required>
+                    <label>服务地址目录</label>
+                    <input id="serviceAddrNode" type="text" class="form-control" disabled>
+                    <label>服务地址(示例：192.168.4.1:8080):</label>
+                    <input id="serviceAddr" type="text" class="form-control" required placeholder="输入服务地址">
+                </div>
+                <div class="modal-footer">
+                    <button id="saveBtn" type="button" class="btn btn-primary" onclick="addJob()">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!--消息提示框-->
 <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
      data-dismiss="modal">
@@ -194,18 +222,17 @@
 
     /*加载服务详情*/
     function load(name, node) {
-        $('#jobModal').modal();
+        $('#editServiceModal').modal();
         $.ajax({
             type: "GET",
             dataType: "json",
             url: "/load/service/" + name + "/addrNode/" + node,
             success: function (response) {
                 if (response.result == "ok") {
-                    $('#myModalLabel').html("编辑");
                     $('#name').val(response.data.childNode);
                     $('#serviceAddr').val(response.data.serviceAddr);
-                    // $('#triggerName').val(response.data.triggerName);
-                    // $('#triggerGroupName').val(response.data.triggerGroupName);
+                    $('#rootNode').val(response.data.rootNode);
+                    $('#serviceAddrNode').val(response.data.subChildNode);
                     $('#saveBtn').attr("onclick", "updateJob()");
                 } else {
                     alert("Warn:" + response.message);
