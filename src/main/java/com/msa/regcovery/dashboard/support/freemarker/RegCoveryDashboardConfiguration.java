@@ -1,11 +1,13 @@
 package com.msa.regcovery.dashboard.support.freemarker;
 
+import com.msa.regcovery.dashboard.RegCoveryDashboardController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 /**
  * The type Reg covery dashboard configuration.
+ *
  * @author sxp
  */
 @Configuration
@@ -33,5 +35,15 @@ public class RegCoveryDashboardConfiguration {
         configurer.setDefaultEncoding(DEFAULT_CHARSET);
         configurer.setPreferFileSystemAccess(false);
         return configurer;
+    }
+
+    /**
+     * Reg covery dashboard controller reg covery dashboard controller.
+     *
+     * @return the reg covery dashboard controller
+     */
+    @Bean
+    public RegCoveryDashboardController regCoveryDashboardController() {
+        return new RegCoveryDashboardController();
     }
 }
