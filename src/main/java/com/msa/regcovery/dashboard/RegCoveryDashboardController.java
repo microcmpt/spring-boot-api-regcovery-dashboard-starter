@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
@@ -39,12 +42,13 @@ public class RegCoveryDashboardController {
     /**
      * Gets services.
      *
+     * @param model the model
      * @return the services
      */
     @RequestMapping("/regcovery-ui.html")
     public String getServices(Model model) {
         Map<String, Object> map = Maps.newHashMap();
-        map.put("result", "no");
+        map.put("result", "fail");
         map.put("message", "服务不存在！");
         ZkClient zkClient = new ZkClient(zkServers, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
         try {
@@ -81,6 +85,43 @@ public class RegCoveryDashboardController {
         }
         model.addAttribute("map", map);
         return "/index";
+    }
+
+    /**
+     * Load map.
+     *
+     * @param name the name
+     * @param node the node
+     * @return the map
+     */
+    @ResponseBody
+    @RequestMapping(value = "/load/service/{name}/addrNode/{node}")
+    public Map<String, Object> load(@PathVariable("name")String name,
+                                    @PathVariable("node")String node) {
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("result", "fail");
+        map.put("message", "服务不存在！");
+        ZkClient zkClient = new ZkClient(zkServers, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        try {
+            String serviceAddrNode = Constant.ZK_REGISTRY + "/" + name + "/" + node;
+            if (zkClient.exists(serviceAddrNode)) {
+                String serviceAddr = zkClient.readData(serviceAddrNode);
+                if (StringUtils.hasText(serviceAddr)) {
+                    ServiceNode serviceNode = ServiceNode.builder()
+                            .rootNode(Constant.ZK_REGISTRY)
+                            .childNode(name)
+                            .subChildNode(node)
+                            .serviceAddr(serviceAddr)
+                            .build();
+                    map.put("result", "ok");
+                    map.put("data", serviceNode);
+                    map.remove("message");
+                }
+            }
+        } finally {
+            zkClient.close();
+        }
+        return map;
     }
 
     /**

@@ -3,7 +3,7 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
     <script src="/webjars/bootstrap-paginator/src/bootstrap-paginator.js"></script>
-    <title>服务注册中心控制台</title>
+    <title>Regcovery服务注册中心控制台</title>
     <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@
                 <td>${service.serviceAddr!''}</td>
                 <td>
                     <div>
-                        <button type="button" class="btn btn-primary" onclick="">编辑</button>
+                        <button type="button" class="btn btn-primary" onclick="load(${service.childNode!''}, ${service.subChildNode!''})">编辑</button>
                         <button type="button" class="btn btn-primary" onclick="">删除</button>
                     </div>
                 </td>
@@ -63,7 +63,7 @@
             <form role="form">
                 <div class="modal-body">
                     <label>服务名称(示例：com.msa.sample.api.HelloRpc4jService):</label>
-                    <input id="name" type="text" class="form-control" required placeholder="输入服务名称">
+                    <input id="name" type="text" class="form-control" placeholder="输入服务名称" required>
                     <label>服务地址(示例：192.168.4.1:8080):</label>
                     <input id="serviceAddr" type="text" class="form-control" required placeholder="输入服务地址">
                 </div>
@@ -94,9 +94,9 @@
     </div>
 </div>
 
-<!--隐藏job,jobGroup-->
-<input id="job" type="hidden"/>
-<input id="jobGroup" type="hidden"/>
+<!--隐藏name,node-->
+<input id="name" type="hidden"/>
+<input id="node" type="hidden"/>
 
 </body>
 
@@ -192,45 +192,27 @@
         });
     }
 
-    /*加载job详情*/
-    function load(job, jobGroup) {
+    /*加载服务详情*/
+    function load(name, node) {
         $('#jobModal').modal();
         $.ajax({
             type: "GET",
             dataType: "json",
-            url: "/api/v1/load/job/" + job + "/group/" + jobGroup,
-            success: function (result) {
-                if (result.status == "ok") {
+            url: "/load/service/" + name + "/addrNode/" + node,
+            success: function (response) {
+                if (response.result == "ok") {
                     $('#myModalLabel').html("编辑");
-                    $('#jobName').val(result.data.jobName);
-                    $('#jobGroupName').val(result.data.jobGroupName);
-                    $('#triggerName').val(result.data.triggerName);
-                    $('#triggerGroupName').val(result.data.triggerGroupName);
-                    $("#jobName").attr("disabled", "disabled");
-                    $("#jobGroupName").attr("disabled", "disabled");
-                    $("#triggerName").attr("disabled", "disabled");
-                    $("#triggerGroupName").attr("disabled", "disabled");
-                    $('#cron').val(result.data.cron);
-                    $('#priority').val(result.data.priority);
-                    if (result.data.misfire == -1) {
-                        $('#misfire').val("-1");
-                    } else if (result.data.misfire == 1) {
-                        $('#misfire').val("1");
-                    } else {
-                        $('#misfire').val("2");
-                    }
-                    $('#applicationId').val(result.data.applicationId);
-                    $('#uri').val(result.data.uri);
-                    $('#url').val(result.data.url);
-                    $('#jobDescription').val(result.data.jobDescription);
-                    $('#triggerDescription').val(result.data.triggerDescription);
+                    $('#name').val(response.data.childNode);
+                    $('#serviceAddr').val(response.data.serviceAddr);
+                    // $('#triggerName').val(response.data.triggerName);
+                    // $('#triggerGroupName').val(response.data.triggerGroupName);
                     $('#saveBtn').attr("onclick", "updateJob()");
                 } else {
-                    alert("Warn:" + result.message);
+                    alert("Warn:" + response.message);
                 }
             },
             error: function () {
-                alert("系统异常！");
+                alert("网络异常！");
             }
         });
 
