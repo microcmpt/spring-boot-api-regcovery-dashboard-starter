@@ -1,5 +1,5 @@
 group 'com.github.microcmpt'
-version '1.0.6-SNAPSHOT'
+version '1.0.1-SNAPSHOT'
 
 apply plugin: 'idea'
 apply plugin: 'java'
@@ -99,31 +99,16 @@ artifacts {
     archives javadocJar
 }
 
-task customizeSchedulerDashboardUi {
-    copy {
-        from("${projectDir}/src/web/images")
-        into("${buildDir}/api-regcovery-ui/dist/images")
-    }
-    delete "${buildDir}/resources"
-}
-
 jar {
-    from("${projectDir}/src/web/regconvery-ui.html") {
-        into "META-INF/resources"
-    }
-
-    from("${buildDir}/api-regcovery-ui/dist/") {
-        into "META-INF/resources/webjars/api-regcovery-ui/"
-        manifest {
-            attributes(
-                    'Built-By': 'Shen Xia ping',
-                    'Created-By': System.properties['java.version'] + " (" + System.properties['java.vendor'] + " " + System.properties['java.vm.version'] + ")",
-                    'Specification-Title': project.name,
-                    'Specification-Version': project.version,
-                    'Implementation-Title': project.name,
-                    'Implementation-Version': project.version,
-                    "SwaggerUi-Version": project.version,
-            )
-        }
+    manifest {
+        attributes(
+                'Built-By': 'Shen Xia ping',
+                'Created-By': System.properties['java.version'] + " (" + System.properties['java.vendor'] + " " + System.properties['java.vm.version'] + ")",
+                'Specification-Title': project.name,
+                'Specification-Version': project.version,
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                "SwaggerUi-Version": project.version,
+        )
     }
 }
