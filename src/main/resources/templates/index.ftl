@@ -64,7 +64,7 @@
                 <div class="modal-body">
                     <label>服务名称:</label>
                     <input id="name" type="text" class="form-control" required placeholder="输入服务名称">
-                    <label>服务地址:</label>
+                    <label>服务地址(示例：192.168.4.1:8080):</label>
                     <input id="serviceAddr" type="text" class="form-control" required placeholder="输入服务地址">
                 </div>
                 <div class="modal-footer">
