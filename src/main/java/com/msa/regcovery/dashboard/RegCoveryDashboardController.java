@@ -3,31 +3,29 @@ package com.msa.regcovery.dashboard;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.msa.regcovery.dashboard.support.Constant;
+import lombok.*;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import java.util.List;
 import java.util.Map;
 
 /**
  * The type Service operation endpoint.
  */
-@Path("/")
-public class ApiResource {
+@Controller
+public class RegCoveryDashboardController {
 
     /**
      * The Zk servers.
      */
-    @Value("${spring.rpc.server.registry-address}")
-    private String zkServers = "localhost:2181";
+    @Value("${spring.rpc.server.registry-address:localhost:2181}")
+    private String zkServers;
 
     /**
      * Sets zk servers.
@@ -43,10 +41,8 @@ public class ApiResource {
      *
      * @return the services
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/services")
-    public Map<String, Object> getServices() {
+    @RequestMapping("/regcovery-ui.html")
+    public String getServices(Model model) {
         Map<String, Object> map = Maps.newHashMap();
         map.put("result", "no");
         map.put("message", "服务不存在！");
@@ -56,7 +52,7 @@ public class ApiResource {
                 List<ServiceNode> serviceNodes = Lists.newArrayList();
                 List<String> serviceNameNodes = zkClient.getChildren(Constant.ZK_REGISTRY);
                 if (CollectionUtils.isEmpty(serviceNameNodes)) {
-                    return map;
+                    model.addAttribute("map", map);
                 }
                 serviceNameNodes.parallelStream().forEach(serviceNameNode -> {
                     List<String> serviceAddrNodes = zkClient.getChildren(Constant.ZK_REGISTRY + "/" + serviceNameNode);
@@ -78,12 +74,13 @@ public class ApiResource {
                 map.put("data", serviceNodes);
                 map.remove("message");
             } else {
-                return map;
+                model.addAttribute("map", map);
             }
         } finally {
             zkClient.close();
         }
-        return map;
+        model.addAttribute("map", map);
+        return "/index";
     }
 
     /**
@@ -92,7 +89,9 @@ public class ApiResource {
     @Setter
     @Getter
     @Builder
-    private static final class ServiceNode {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static final class ServiceNode {
         /**
          * The Root node.
          */
