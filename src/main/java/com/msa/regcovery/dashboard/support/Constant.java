@@ -1,4 +1,4 @@
-package com.msa.regcovery.dashboard;
+package com.msa.regcovery.dashboard.support;
 
 /**
  * The interface Constant.
