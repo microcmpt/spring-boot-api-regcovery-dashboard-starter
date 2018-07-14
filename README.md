@@ -10,7 +10,7 @@ maven:
 <dependency>
   <groupId>com.github.microcmpt</groupId>
   <artifactId>spring-boot-api-regcovery-dashboard-starter</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 gradle:
