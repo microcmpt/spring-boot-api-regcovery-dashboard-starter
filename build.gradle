@@ -1,5 +1,5 @@
 group 'com.github.microcmpt'
-version '1.0.11-SNAPSHOT'
+version '1.0.1'
 
 apply plugin: 'idea'
 apply plugin: 'java'
@@ -31,7 +31,6 @@ dependencies {
     compile 'org.webjars:webjars-locator:0.31'
     compile 'org.webjars:bootstrap:3.3.7-1'
     compile 'org.webjars:jquery:3.1.1'
-    compile "org.springframework.boot:spring-boot-starter-web:1.5.10.RELEASE"
     compile "org.springframework.boot:spring-boot-starter-freemarker:1.5.10.RELEASE"
     compile "org.springframework.boot:spring-boot-starter-actuator:1.5.10.RELEASE"
 }
