@@ -11,9 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
@@ -63,16 +61,19 @@ public class RegCoveryDashboardController {
                     if (CollectionUtils.isEmpty(serviceAddrNodes)) {
                         return;
                     }
-                    serviceAddrNodes.parallelStream().map(serviceAddrNode -> {
+                    final StringBuilder stringBuilder = new StringBuilder();
+                    serviceAddrNodes.parallelStream().forEach(serviceAddrNode -> {
                         String serviceAddr = zkClient.readData(Constant.ZK_REGISTRY + "/" + serviceNameNode + "/" + serviceAddrNode);
-                        ServiceNode serviceNode = ServiceNode.builder()
-                                .rootNode(Constant.ZK_REGISTRY)
-                                .childNode(serviceNameNode)
-                                .subChildNode(serviceAddrNode)
-                                .serviceAddr(serviceAddr)
-                                .build();
-                        return serviceNode;
-                    }).forEach(serviceNodes::add);
+                        if (StringUtils.hasText(serviceAddr)) {
+                            stringBuilder.append(serviceAddr).append(",");
+                        }
+                    });
+                    ServiceNode.ServiceNodeBuilder serviceNodeBuilder = ServiceNode.builder()
+                            .childNode(serviceNameNode);
+                    if (StringUtils.hasText(stringBuilder)) {
+                        serviceNodeBuilder.serviceAddrs(stringBuilder.substring(0, stringBuilder.length() - 1));
+                    }
+                    serviceNodes.add(serviceNodeBuilder.build());
                 });
                 map.put("result", "ok");
                 map.put("data", serviceNodes);
@@ -88,43 +89,6 @@ public class RegCoveryDashboardController {
     }
 
     /**
-     * Load map.
-     *
-     * @param name the name
-     * @param node the node
-     * @return the map
-     */
-    @ResponseBody
-    @RequestMapping(value = "/load/service/{name}/addrNode/{node}")
-    public Map<String, Object> load(@PathVariable("name")String name,
-                                    @PathVariable("node")String node) {
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("result", "fail");
-        map.put("message", "服务不存在！");
-        ZkClient zkClient = new ZkClient(zkServers, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
-        try {
-            String serviceAddrNode = Constant.ZK_REGISTRY + "/" + name + "/" + node;
-            if (zkClient.exists(serviceAddrNode)) {
-                String serviceAddr = zkClient.readData(serviceAddrNode);
-                if (StringUtils.hasText(serviceAddr)) {
-                    ServiceNode serviceNode = ServiceNode.builder()
-                            .rootNode(Constant.ZK_REGISTRY)
-                            .childNode(name)
-                            .subChildNode(node)
-                            .serviceAddr(serviceAddr)
-                            .build();
-                    map.put("result", "ok");
-                    map.put("data", serviceNode);
-                    map.remove("message");
-                }
-            }
-        } finally {
-            zkClient.close();
-        }
-        return map;
-    }
-
-    /**
      * The type Service node.
      */
     @Setter
@@ -134,23 +98,13 @@ public class RegCoveryDashboardController {
     @AllArgsConstructor
     public static final class ServiceNode {
         /**
-         * The Root node.
-         */
-        private String rootNode;
-
-        /**
          * The Child node.
          */
         private String childNode;
 
         /**
-         * The Sub child node.
+         * The Service addrs.
          */
-        private String subChildNode;
-
-        /**
-         * The Service addr.
-         */
-        private String serviceAddr;
+        private String serviceAddrs;
     }
 }

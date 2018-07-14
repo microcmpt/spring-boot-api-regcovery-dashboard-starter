@@ -1,4 +1,4 @@
-package com.msa.regcovery.dashboard.support.freemarker;
+package com.msa.regcovery.dashboard.support;
 
 import com.msa.regcovery.dashboard.RegCoveryDashboardController;
 import org.springframework.context.annotation.Bean;
