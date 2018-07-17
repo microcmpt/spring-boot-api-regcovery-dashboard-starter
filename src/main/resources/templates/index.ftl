@@ -68,7 +68,15 @@
             success: function (data) {
                 var tmp = "";
                 $.each(data, function (_key) {
-                    tmp += "<tr><td>" + _key + "</td><td>" + data[_key] + "</td></tr>";
+                    var jsonVal = JSON.stringify(data[_key]);
+                    if (jsonVal.indexOf("{") == 0 && jsonVal.indexOf("}") == jsonVal.length - 1) {
+                        tmp += "<tr class='text-info'><td><strong>" + _key + "</strong></td><td></td></tr>";
+                        $.each(data[_key], function (_k) {
+                            tmp += "<tr><td>" + _k + "</td><td>" + data[_key][_k] + "</td></tr>";
+                        });
+                    } else {
+                        tmp += "<tr><td>" + _key + "</td><td>" + data[_key] + "</td></tr>";
+                    }
                 });
                 $('#systemInfoTbody').append(tmp);
             },
