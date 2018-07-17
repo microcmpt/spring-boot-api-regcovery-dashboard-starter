@@ -9,13 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<div class="container"><br/>
-    <div>
-        <img src="/images/spring-boot.jpg" height="60" width="60">
-        <img src="/images/logo.png">
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="navbar-header">
+        <img src="/images/spring-boot.png" height="60" width="60">
+        <img src="/images/logo.png" width="500">
+
     </div>
-    <br/>
-    <#-- 系统状态 -->
+    <div>
+        <a class="navbar-brand" href="/regcovery-ui.html">HOME</a>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="https://microcmpt.github.io/" target="_blank">Document</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="container"><br/>
+<#-- 系统状态 -->
     <div class="table-responsive">
         <h3><strong>System Info</strong></h3>
         <table class="table">
@@ -29,7 +37,7 @@
             </tbody>
         </table>
     </div>
-    <#-- 服务注册信息 -->
+<#-- 服务注册信息 -->
     <div class="table-responsive">
         <h3><strong>Services currently registered with Regcovery</strong></h3>
         <table class="table">
