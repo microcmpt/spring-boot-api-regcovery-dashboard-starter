@@ -4,9 +4,10 @@ package com.msa.regcovery.dashboard;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.msa.regcovery.dashboard.support.Constant;
+import com.msa.regcovery.dashboard.support.RegcoveryDashboardProperties;
 import lombok.*;
 import org.I0Itec.zkclient.ZkClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -23,19 +24,10 @@ import java.util.Map;
 public class RegCoveryDashboardController {
 
     /**
-     * The Zk servers.
+     * The Properties.
      */
-    @Value("${spring.rpc.server.registry-address:localhost:2181}")
-    private String zkServers;
-
-    /**
-     * Sets zk servers.
-     *
-     * @param zkServers the zk servers
-     */
-    public void setZkServers(String zkServers) {
-        this.zkServers = zkServers;
-    }
+    @Autowired
+    private RegcoveryDashboardProperties properties;
 
     /**
      * Gets services.
@@ -48,7 +40,7 @@ public class RegCoveryDashboardController {
         Map<String, Object> map = Maps.newHashMap();
         map.put("result", "fail");
         map.put("message", "服务不存在！");
-        ZkClient zkClient = new ZkClient(zkServers, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        ZkClient zkClient = new ZkClient(properties.getZkServers(), Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
         try {
             if (zkClient.exists(Constant.ZK_REGISTRY)) {
                 List<ServiceNode> serviceNodes = Lists.newArrayList();
@@ -62,14 +54,18 @@ public class RegCoveryDashboardController {
                         return;
                     }
                     final StringBuilder stringBuilder = new StringBuilder();
+                    boolean appFlag[] = {false};
                     serviceAddrNodes.parallelStream().forEach(serviceAddrNode -> {
                         String serviceAddr = zkClient.readData(Constant.ZK_REGISTRY + "/" + serviceNameNode + "/" + serviceAddrNode);
                         if (StringUtils.hasText(serviceAddr)) {
+                            appFlag[0] = serviceAddr.startsWith(":=");
+                            serviceAddr = appFlag[0] ? serviceAddr.substring(":=".length()) : serviceAddr;
                             stringBuilder.append(serviceAddr).append(",");
                         }
                     });
                     ServiceNode.ServiceNodeBuilder serviceNodeBuilder = ServiceNode.builder()
-                            .childNode(serviceNameNode);
+                            .childNode(serviceNameNode)
+                            .isApp(appFlag[0]+"");
                     if (StringUtils.hasText(stringBuilder)) {
                         serviceNodeBuilder.serviceAddrs(stringBuilder.substring(0, stringBuilder.length() - 1));
                     }
@@ -106,5 +102,10 @@ public class RegCoveryDashboardController {
          * The Service addrs.
          */
         private String serviceAddrs;
+
+        /**
+         * The Is app.
+         */
+        private String isApp;
     }
 }

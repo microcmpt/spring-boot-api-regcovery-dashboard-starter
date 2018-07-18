@@ -13,7 +13,6 @@
     <div class="navbar-header">
         <img src="/images/spring-boot.png" height="60" width="60">
         <img src="/images/logo.png" width="500">
-
     </div>
     <div>
         <a class="navbar-brand" href="/regcovery-ui.html">HOME</a>
@@ -40,10 +39,11 @@
 <#-- 服务注册信息 -->
     <div class="table-responsive">
         <h3><strong>Services currently registered with Regcovery</strong></h3>
-        <table class="table">
+        <table class="table table-condensed">
             <thead>
             <tr class="active">
                 <th>Service Name</th>
+                <th>Service Species</th>
                 <th>Service Address</th>
             </tr>
             </thead>
@@ -51,6 +51,11 @@
             <#list map.data as service>
             <tr>
                 <td>${service.childNode!''}</td>
+                <#if service.isApp == 'true'>
+                    <td><span class="label label-info">Application</span></td>
+                <#else>
+                    <td><span class="label label-warning">Service</span></td>
+                </#if>
                 <td>${service.serviceAddrs!''}</td>
             </tr>
             </#list>

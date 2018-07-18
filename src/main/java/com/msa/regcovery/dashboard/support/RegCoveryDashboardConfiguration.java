@@ -46,4 +46,14 @@ public class RegCoveryDashboardConfiguration {
     public RegCoveryDashboardController regCoveryDashboardController() {
         return new RegCoveryDashboardController();
     }
+
+    /**
+     * Properties regcovery dashboard properties.
+     *
+     * @return the regcovery dashboard properties
+     */
+    @Bean
+    public RegcoveryDashboardProperties properties() {
+        return new RegcoveryDashboardProperties();
+    }
 }
